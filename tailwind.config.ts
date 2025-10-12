@@ -31,6 +31,14 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -84,6 +92,20 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "scan": "scan 2s ease-in-out infinite",
+        "shield-glow": "shield-glow 2s ease-in-out infinite",
+      },
+      backgroundImage: {
+        "gradient-shield": "var(--gradient-shield)",
+        "gradient-safe": "var(--gradient-safe)",
+        "gradient-danger": "var(--gradient-danger)",
+        "gradient-warning": "var(--gradient-warning)",
+      },
+      boxShadow: {
+        "shield": "var(--shadow-shield)",
+        "danger": "var(--shadow-danger)",
+        "card": "var(--shadow-card)",
       },
     },
   },
