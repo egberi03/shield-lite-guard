@@ -26,33 +26,47 @@ const Scanner = () => {
     setScanning(true);
     setResult(null);
 
-    // Simulate AI scanning
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/detect-phishing`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ message }),
+        }
+      );
 
-    // Demo logic: detect phishing keywords
-    const lowerMessage = message.toLowerCase();
-    const phishingKeywords = ["urgent", "verify", "account blocked", "click here", "suspended", "prize", "winner"];
-    const hasPhishing = phishingKeywords.some(keyword => lowerMessage.includes(keyword));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to scan message');
+      }
 
-    if (hasPhishing) {
+      const data = await response.json();
+      const confidencePercent = Math.round(data.confidence * 100);
+      
       setResult({
-        type: "danger",
-        title: "Phishing Detected",
-        description: "This message contains suspicious content typical of phishing attempts. Do not click any links or share personal information.",
-        confidence: 92,
+        type: data.type,
+        title: data.title,
+        description: data.description,
+        confidence: confidencePercent,
       });
-      toast.error("⚠️ Phishing threat detected!");
-    } else {
-      setResult({
-        type: "safe",
-        title: "Message is Safe",
-        description: "No suspicious content detected. This message appears to be legitimate.",
-        confidence: 95,
-      });
-      toast.success("✓ Message is safe");
+
+      if (data.type === "danger") {
+        toast.error("⚠️ Phishing threat detected!");
+      } else if (data.type === "warning") {
+        toast("⚠️ Suspicious content detected");
+      } else {
+        toast.success("✓ Message is safe");
+      }
+    } catch (error) {
+      console.error('Scan error:', error);
+      toast.error(error instanceof Error ? error.message : "Failed to analyze message. Please try again.");
+    } finally {
+      setScanning(false);
     }
-
-    setScanning(false);
   };
 
   return (
